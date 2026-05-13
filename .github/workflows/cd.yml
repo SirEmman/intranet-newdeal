@@ -1,0 +1,27 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan sécurité
+        uses: aquasecurity/trivy-action@master
+        with:
+          exit-code: 1
+          severity: CRITICAL
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: scan
+
+    steps:
+      - name: Notification email
+        run: echo "Pipeline terminé"
